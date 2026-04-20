@@ -1,0 +1,234 @@
+## PolicyGuard Insurance Portal
+
+ A full-stack policyholder management application built with **ASP.NET Core 8** and **Angular 20**.
+
+---------
+
+## Required Tools / SDK Versions
+
+ Please download and install below Required tools and SDK Versions in order to run the Web App
+
+  IDE - VS Code latest (Open Source)
+  .NET SDK - 8.0+  ( https://dotnet.microsoft.com/en-us/download/dotnet/thank-you/sdk-8.0.420-windows-x64-installer )
+  Node.js - latest   ( https://nodejs.org/en/download )
+
+  No external database server is needed, the application uses **SQLite**, which runs as an embedded file-based database.
+
+ Verification: 
+  Open new terminal using " Ctrl+Shift+` " or by using top Toolbar panel "Terminal --> New Terminal" 
+  and run below Commands just to make sure we have latest Versions of "node" and "npm" Installed
+
+  For npm Version: npm -v (make sure you have verison > 10.5)
+  For Node Version: node -v (make sure you have verison > 22.0 )
+
+ Installation of Node modules and Angular CLI:
+    First Open terminal as described above in Verification Process and 
+    follow below Commands in Sequential order (Make you have the terminal set to " ..\Demographic_Information>" before Execution)
+
+    1. cd frontend 
+    2. npm install -g @angular/cli
+    3. npm install
+
+---------
+
+## How to Run the Web App Locally
+
+ ### 1. we Need Run Both ( backend and frontend ) together 
+   We can follow either one of the Execution Process in order to run
+
+  #### Manual Execution:
+
+    Please excute ###2 and ###3 steps below
+    The frontend is pre-configured to proxy API requests to `http://localhost:5000/api`.
+
+  #### Powershell Script Execution:
+
+   From the project root folder, you will be seeing "RunApp.ps1" run that PowerShell script, make sure you have the latest PowerShell installed 
+   If Installing latest powershell is not possible then please fallback to above #### Manual Execution:
+
+   ```powershell script
+   .\RunApp.ps1
+   ```
+
+   This restores dependencies, then launches the backend and frontend in separate terminal windows. The frontend is pre-configured to proxy API requests to `http://localhost:5000/api`.
+   once after both projects is up and running then the app starts at **http://localhost:4200** Automatically 
+   If you see any errors please kill both terminal and re-run the **Powershell script**
+
+ ### 2. Backend (ASP.NET Core API)
+  Open New terminal as described above in Verification Process and run below Commands in Sequential order (Make you have the terminal set to " ..\Demographic_Information>" before Execution)
+
+  1. cd backend/Demo.API
+  2. dotnet run
+ 
+  The API starts at **http://localhost:5000**. Swagger UI is available at http://localhost:5000/swagger in development mode.
+
+  #### Testing Authenticated Endpoints via Swagger
+
+  1. In Swagger UI, expand **POST `/api/auth/register`** or **POST `/api/auth/login`**
+  2. Click *TRY IT OUT*, enter the request body, and click *EXECUTE*
+  3. Copy the `token` value from the response
+  4. Click the *AUTHORIZE* button at the top of the page
+  5. Paste the token and click *Authorize*
+  6. All subsequent requests will now include the JWT automatically
+
+ ### 3. Frontend (Angular)
+  Open New terminal as described above in Verification Process and run below Commands in Sequential order (Make you have the terminal set to " ..\Demographic_Information>" before Execution)
+
+  1. cd frontend
+  2. ng serve
+
+  The app starts at *http://localhost:4200*.
+
+---------
+
+## Database Setup
+
+ *No manual setup is required* 
+ application uses SQLite with Entity Framework Core auto-migration. On first startup, the API:
+
+ 1. It Creates the `demo.db` file in the `Demo.API` directory
+ 2. Applies all pending EF Core migrations automatically
+
+ The connection string in `appsettings.json` is:
+
+ ```
+ Data Source=demo.db
+ ```
+ To reset the database, stop the backend API and delete the `demo.db` file. It will be recreated on next startup.
+
+------
+
+## Test Credentials
+
+  1. Open http://localhost:4200
+  2. You will be seeing login Screen by default
+  3. You can create a new account or You can login using existing credentials
+  4. Log in with the credentials you just created or use existing once below
+  
+  Email: useragent@gmail.com
+  password: 87654321
+
+  Alternatively, use the **Import Policyholder** button on the dashboard to pull a random user from the RandomUser.me API. 
+  Imported users are assigned the default password `ImportedUser123!`.
+
+---
+
+## API Usage Notes
+
+All endpoints are prefixed with `/api`. Authentication endpoints are public, all others require a valid JWT Bearer token in the `Authorization` header.
+
+### Authentication — `/api/auth` (Public)
+
+| Method | Route | Description |
+|--------|-------|-------------|
+| POST | `/api/auth/register` | Register a new user. Returns JWT token + user data. |
+| POST | `/api/auth/login` | Authenticate. Returns JWT token + user data. |
+
+**Register** request body:
+```json
+{
+  "firstName": "string",
+  "lastName": "string",
+  "email": "string",
+  "password": "string (min 8 chars)",
+  "dateOfBirth": "string (optional)",
+  "phone": "string (optional)",
+  "street": "string (optional)",
+  "city": "string (optional)",
+  "state": "string (optional)",
+  "zipCode": "string (optional)",
+  "country": "string (optional)"
+}
+```
+
+**Login** request body:
+```json
+{
+  "email": "string",
+  "password": "string"
+}
+```
+
+### Policyholders — `/api/users` (Requires Authentication)
+
+| Method | Route | Description |
+|--------|-------|-------------|
+| GET | `/api/users` | List all policyholders |
+| GET | `/api/users/{id}` | Get a single policyholder |
+| POST | `/api/users` | Create a new policyholder |
+| PUT | `/api/users/{id}` | Update a policyholder |
+| DELETE | `/api/users/{id}` | Delete a policyholder |
+| POST | `/api/users/import-random` | Import a random policyholder from RandomUser.me |
+| GET | `/api/users/document/{id}` | Download a single policyholder's data as CSV |
+| GET | `/api/users/export` | Export all policyholders as CSV |
+
+### JWT Configuration
+
+| Setting | Value |
+|---------|-------|
+| Algorithm | HMAC-SHA256 |
+| Token Expiry | 8 hours |
+| Issuer | `PolicyGuard` |
+| Audience | `PolicyGuardUsers` |
+
+Tokens are stored in `localStorage` on the frontend and attached to requests via an HTTP interceptor.
+
+---
+
+## Architecture & Implementation Decisions
+
+### Project Structure
+
+
+Demo/
+├── backend/
+│   ├── Demo.slnx              --Solution file
+│   ├── Demo.API/               -- Web API layer (controllers, DI, middleware)
+│   ├── Demo.Core/              --Domain layer (entities, DTOs, interfaces)
+│   └── Demo.Infrastructure/    --Data layer (EF Core, service implementations)
+├── frontend/                   --Angular SPA
+│   └── src/app/
+│       ├── components/         --UI components include dashboard, login, register, navbar
+│       ├── directives/         --Custom input masks (phone, zip)
+│       ├── guards/             --Route protection
+│       ├── interceptors/       --JWT header injection
+│       ├── models/             --TypeScript interfaces
+│       └── services            --HTTP service layer
+├── Documentation.md
+└── RunApp.ps1
+
+### Backend — Clean Architecture
+
+The backend follows a **clean architecture** pattern with three layers:
+
+- *Demo.Core* — Contains domain entities, DTOs, and service interfaces. It has no external dependencies, ensuring the domain logic remains framework-agnostic.
+- *Demo.Infrastructure* — Implements the service interfaces and it Contains the EF Core `DbContext`, migrations, and integrations (BCrypt hashing, JWT generation, RandomUser.me API client).
+- *Demo.API* — It is the entry point and handles HTTP concerns (controllers, middleware, DI registration, CORS, authentication pipeline).
+
+### Frontend — Angular Signals
+
+- *Signals*- are used for all component state.
+- *Standalone components* — no `NgModule`s, every component declares its own imports.
+- *Lazy-loaded routes* — dashboard, login, and register components are loaded on demand.
+- *Functional patterns* — the auth guard and HTTP interceptor use the modern functional API.
+
+### Authentication Flow
+
+1. User registers or logs in via `/api/auth/*`
+2. Backend hashes password with **BCrypt**, generates a **JWT** token
+3. Frontend stores the token in `localStorage` and exposes an `isAuthenticated` signal
+4. The HTTP interceptor attaches the token to all subsequent API requests
+5. The auth guard protects the `/dashboard` route, redirecting unauthenticated users to `/login`
+
+### External Integration
+
+The **Import Policyholder** feature calls the [RandomUser.me](https://randomuser.me/) API server-side to fetch a random person's demographic data, maps it to the User entity, and persists it. Imported users receive a default password of `ImportedUser123!` and duplicate email collisions are handled by appending a random suffix.
+
+### CSV Export
+
+Both single-record and bulk CSV downloads are generated server-side and returned as `text/csv` file responses. The frontend triggers downloads by creating a temporary Blob URL.
+
+### Custom Directives
+
+- **Phone mask** — formats phone input as `(xxx) xxx-xxxx`
+- **Zip mask** — formats zip code input by adding  `-` after first 5 digits
