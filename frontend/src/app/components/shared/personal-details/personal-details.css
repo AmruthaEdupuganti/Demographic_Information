@@ -1,0 +1,21 @@
+.required {
+  color: red;
+}
+
+.form-section {
+  border: none;
+  padding: 0;
+  margin: 0 0 1.25rem 0;
+}
+
+.form-section legend {
+  font-weight: 600;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--primary);
+  margin-bottom: 0.75rem;
+  padding-bottom: 0.35rem;
+  border-bottom: 2px solid var(--primary-bg);
+  width: 100%;
+}

@@ -1,0 +1,36 @@
+<div class="auth-container">
+  <div class="auth-card card">
+    <div class="auth-header">
+      <div class="auth-icon">&#x1F6E1;</div>
+      <h2>Create Account</h2>
+      <p class="auth-subtitle">Register to manage your insurance policies</p>
+    </div>
+
+    @if (error()) {
+      <div class="alert alert-error">
+        <span class="alert-icon">&#x26A0;</span>
+        {{ error() }}
+      </div>
+    }
+
+    <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+      
+
+      <personal-details [personalFormDetails]="registerForm" [showPasswordField]="true"></personal-details>
+
+      <div class="form-submit">
+        <button type="submit" [disabled]="registerForm.invalid || loading()" class="btn btn-primary btn-full">
+          @if (loading()) {
+            <span class="spinner spinner-sm"></span> Creating account...
+          } @else {
+            Create Account
+          }
+        </button>
+      </div>
+    </form>
+
+    <div class="auth-footer">
+      <p>Already have an account? <a routerLink="/login">Sign in</a></p>
+    </div>
+  </div>
+</div>

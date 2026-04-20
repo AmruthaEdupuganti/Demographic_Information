@@ -1,0 +1,25 @@
+.app-main {
+  min-height: calc(100vh - 60px - 52px);
+}
+
+.app-footer {
+  background: var(--primary);
+  color: rgba(255, 255, 255, 0.7);
+  text-align: center;
+  padding: 1rem 1.25rem;
+  font-size: 0.85rem;
+}
+
+.footer-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.footer-sep {
+  color: rgba(255, 255, 255, 0.3);
+}

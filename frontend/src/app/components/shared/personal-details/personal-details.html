@@ -1,0 +1,84 @@
+<form *ngIf="personalFormDetails" [formGroup]="personalFormDetails">
+      <fieldset class="form-section">
+        <legend>Account Information</legend>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="firstName">First Name <span class="required">*</span></label>
+            <input id="firstName" type="text" formControlName="firstName" placeholder="First Name">
+            @if (personalFormDetails.get('firstName')?.invalid && personalFormDetails.get('firstName')?.touched) {
+              <small class="error-text">First name is required</small>
+            }
+          </div>
+          <div class="form-group">
+            <label for="lastName">Last Name <span class="required">*</span></label>
+            <input id="lastName" type="text" formControlName="lastName" placeholder="Last Name">
+            @if (personalFormDetails.get('lastName')?.invalid && personalFormDetails.get('lastName')?.touched) {
+              <small class="error-text">Last name is required</small>
+            }
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="email">Email Address <span class="required">*</span></label>
+          <input id="email" type="email" formControlName="email" placeholder="your@example.com" autocomplete="email">
+          @if (personalFormDetails.get('email')?.invalid && personalFormDetails.get('email')?.touched) {
+            <small class="error-text">Please enter a valid email address</small>
+          }
+        </div>
+
+        <div *ngIf="showPasswordField" class="form-group">
+          <label for="password">Password <span class="required">*</span></label>
+          <input id="password" type="password" formControlName="password" placeholder="Min 8 characters" autocomplete="new-password">
+          @if (personalFormDetails.get('password')?.invalid && personalFormDetails.get('password')?.touched) {
+            <small class="error-text">Password must be at least 8 characters</small>
+          }
+        </div>
+      </fieldset>
+
+      <fieldset class="form-section">
+        <legend>Policyholder Details</legend>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="dateOfBirth">Date of Birth <span class="required">*</span></label>
+            <input id="dateOfBirth" type="date" formControlName="dateOfBirth" placeholder="MM/DD/YYYY">
+            @if (personalFormDetails.get('dateOfBirth')?.invalid && personalFormDetails.get('dateOfBirth')?.touched) {
+            <small class="error-text">Date of birth is required</small>
+          }
+          </div>
+          <div class="form-group">
+            <label for="phone">Phone Number</label>
+            <input id="phone" type="tel" formControlName="phone" placeholder="(xxx) xxx-xxxx" appPhoneMask>
+          </div>
+        </div>
+      </fieldset>
+
+      <fieldset class="form-section">
+        <legend>Address</legend>
+        <div class="form-group">
+          <label for="street">Street Address</label>
+          <input id="street" type="text" formControlName="street" placeholder="Street Address">
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="city">City</label>
+            <input id="city" type="text" formControlName="city" placeholder="City">
+          </div>
+          <div class="form-group">
+            <label for="state">State</label>
+            <input id="state" type="text" formControlName="state" placeholder="State">
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="zipCode">Zip Code</label>
+            <input id="zipCode" type="text" formControlName="zipCode" placeholder="Zip Code" appZipMask>
+          </div>
+          <div class="form-group">
+            <label for="country">Country</label>
+            <input id="country" type="text" formControlName="country" placeholder="Country">
+          </div>
+        </div>
+      </fieldset>
+      </form>

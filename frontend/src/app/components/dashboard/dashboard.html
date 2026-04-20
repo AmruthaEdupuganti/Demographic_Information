@@ -1,0 +1,152 @@
+<!-- Toast Notifications -->
+<div class="toast-container">
+  @for (toast of toasts(); track toast.id) {
+    <div class="toast" [class]="'toast-' + toast.type">
+      @if (toast.type === 'success') { <span>&#x2714;</span> }
+      @if (toast.type === 'error') { <span>&#x2718;</span> }
+      @if (toast.type === 'info') { <span>&#x2139;</span> }
+      {{ toast.message }}
+    </div>
+  }
+</div>
+
+<div class="dashboard">
+  <!-- Welcome Banner -->
+  <div class="welcome-banner">
+    <div class="welcome-text">
+      <h1>&#x1F44B; Welcome back, {{ currentUserName }}</h1>
+      <p>Manage your policyholders, download records, and keep your data up to date.</p>
+    </div>
+  </div>
+
+  <!-- Stats Bar -->
+  <div class="stats-bar">
+    <div class="stat-card">
+      <div class="stat-icon">&#x1F6E1;</div>
+      <div class="stat-info">
+        <span class="stat-value">{{ users().length }}</span>
+        <span class="stat-label">Total Policyholders</span>
+      </div>
+    </div>
+    <div class="stat-card col stat-card-accent">
+      <div class="stat-icon">&#x1F4DE;</div>
+      <div class="stat-info">
+        <span class="stat-value">{{ usersWithPhone() }}</span>
+        <span class="stat-label">With Phone</span>
+      </div>
+    </div>
+    <div class="stat-card col stat-card-success">
+      <div class="stat-icon">&#x1F4CD;</div>
+      <div class="stat-info">
+        <span class="stat-value">{{ usersWithAddress() }}</span>
+        <span class="stat-label">With Address</span>
+      </div>
+    </div>
+  </div>
+
+  @if (error()) {
+    <div class="alert alert-error">
+      <span>&#x26A0;</span>
+      {{ error() }}
+      <button class="close-btn" (click)="error.set('')">&times;</button>
+    </div>
+  }
+
+  <!-- Toolbar -->
+  <div class="toolbar">
+    <h2 class="toolbar-title">&#x1F4CB; Policyholder Records</h2>
+    <div class="toolbar-actions">
+      <button class="btn btn-primary" (click)="openCreateForm()">
+        <span>&#x2795;</span> Add Policyholder
+      </button>
+      <button class="btn btn-accent" (click)="importRandomUser()" [disabled]="importLoading()">
+        @if (importLoading()) {
+          <span class="spinner spinner-sm"></span> Importing...
+        } @else {
+          <span>&#x1F310;</span> Import Policyholder (RandomUser API)
+        }
+      </button>
+      <button class="btn btn-secondary" (click)="exportAllRecords()">
+        <span>&#x1F4E5;</span> Download All Records
+      </button>
+    </div>
+  </div>
+
+  <!-- User Form Modal -->
+  @if (showForm()) {
+    <div class="modal-overlay" (click)="cancelForm()">
+      <div class="modal-content card" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+          <h3>{{ editingUser() ? '&#x1F589; Edit Policyholder' : '&#x2795; New Policyholder' }}</h3>
+          <button class="close-btn" (click)="cancelForm()">&times;</button>
+        </div>
+        <form [formGroup]="userForm" (ngSubmit)="onSubmit()">
+          <div class="modal-body">
+          <personal-details [personalFormDetails]="userForm" [showPasswordField]="!editingUser()"></personal-details></div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" (click)="cancelForm()">Cancel</button>
+            <button type="submit" class="btn btn-primary" [disabled]="userForm.invalid">
+              {{ editingUser() ? 'Save Changes' : 'Add Policyholder' }}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  }
+
+  @if (loading()) {
+    <div class="spinner-container">
+      <div class="spinner"></div>
+      <span>Loading policyholders...</span>
+    </div>
+  } @else {
+    <div class="table-container">
+      <table>
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Email</th>
+            <th>DOB</th>
+            <th>Phone</th>
+            <th>Location</th>
+            <th class="td-doc">Documents</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (user of users(); track user.id) {
+            <tr>
+              <td class="td-name">
+                <span class="user-avatar">{{ user.firstName[0] }}{{ user.lastName[0] }}</span>
+                {{ user.firstName }} {{ user.lastName }}
+              </td>
+              <td>{{ user.email }}</td>
+              <td>{{ user.dateOfBirth ? (user.dateOfBirth | date:'mediumDate') : '—' }}</td>
+              <td>{{ user.phone || '—' }}</td>
+              <td>{{ formatLocation(user) || '—' }}</td>
+              <td class="td-doc">
+                <button class="btn btn-icon btn-download" title="Download Demographic Information" (click)="downloadDocument(user)">
+                  &#x1F4E5;
+                </button>
+              </td>
+              <td class="td-actions">
+                <button class="btn btn-icon btn-edit" title="Edit" (click)="openEditForm(user)">&#x1F589;</button>
+                <button class="btn btn-icon btn-delete" title="Delete" (click)="deleteUser(user)">&#x1F5D1;</button>
+              </td>
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="7" class="empty-state">
+                <div class="empty-content">
+                  <span class="empty-icon">&#x1F4C2;</span>
+                  <p class="empty-title">No policyholders yet</p>
+                  <p class="empty-text">Add a policyholder manually or import one to get started.</p>
+                </div>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</div>
