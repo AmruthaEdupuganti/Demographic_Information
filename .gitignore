@@ -1,0 +1,12 @@
+# dependencies
+/frontend/node_modules
+/frontend/.angular
+/backend/Demo.API/bin
+/backend/Demo.API/obj
+/backend/Demo.API/obj/Debug
+/backend/Demo.Core/bin
+/backend/Demo.Core/obj
+/backend/Demo.Core/obj/Debug
+/backend/Demo.Infrastructure/bin
+/backend/Demo.Infrastructure/obj
+/backend/Demo.Infrastructure/obj/Debug
